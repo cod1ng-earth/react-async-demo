@@ -1,8 +1,15 @@
 import React, {useEffect, useState} from 'react';
 
-function aVeryHeavyAsyncApiCall(thatRunsForMilliSeconds) {
+function aVeryHeavyAsyncApiCall(thatRunsForMilliSeconds, {signal}) {
+
   return new Promise((resolve, reject) => {
-    setTimeout(() => resolve("hey, Im done!"), thatRunsForMilliSeconds);
+    const timeout = setTimeout(() => resolve("hey, Im done!"), thatRunsForMilliSeconds);
+    signal.addEventListener("abort", () => {
+      clearTimeout(timeout);
+      reject("Someone aborted me! 😠")
+      console.log("aborting the very long api request...")
+    })
+    
   })
 }
 
@@ -10,9 +17,20 @@ function PageOne() {
   const [apiResult, setApiResult] = useState();
 
   useEffect(() => {
-    aVeryHeavyAsyncApiCall(3000).then(result => {
-      setApiResult(result)
-    })
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+    (async () => {
+      try {
+        const result = await aVeryHeavyAsyncApiCall(3000, {signal});
+        setApiResult(result)
+      } catch(e) {
+        console.log("Page one is 💀: ", e);
+      }
+    })();
+    
+    return function() {
+      abortController.abort();
+    }
   }, []) 
 
   return (

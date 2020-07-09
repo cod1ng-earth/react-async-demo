@@ -1,19 +1,21 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect,  useGlobal } from 'reactn'; 
 
 function aVeryHeavyAsyncApiCall(thatRunsForMilliSeconds) {
   return new Promise((resolve, reject) => {
-    setTimeout(() => resolve("hey, Im done!"), thatRunsForMilliSeconds);
+    setTimeout(() => {
+      resolve(`hey, Im done! The time is ${new Date().toISOString()}`)
+    }, thatRunsForMilliSeconds);
   })
 }
 
 function PageOne() {
-  const [apiResult, setApiResult] = useState();
+  const [apiResult, setApiResult] = useGlobal('apiResult');
 
   useEffect(() => {
     aVeryHeavyAsyncApiCall(3000).then(result => {
-      setApiResult(result)
+      setApiResult(result);
     })
-  }, []) 
+  }, [setApiResult]) 
 
   return (
     <div>

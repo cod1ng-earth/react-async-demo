@@ -1,19 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
+import { useAsync } from "react-async"
 
-function aVeryHeavyAsyncApiCall(thatRunsForMilliSeconds) {
+function aVeryHeavyAsyncApiCall({thatRunsForMilliSeconds}) {
   return new Promise((resolve, reject) => {
-    setTimeout(() => resolve("hey, Im done!"), thatRunsForMilliSeconds);
+    setTimeout(() => resolve(`hey, I ran ${thatRunsForMilliSeconds}ms!`), thatRunsForMilliSeconds);
   })
 }
 
 function PageOne() {
-  const [apiResult, setApiResult] = useState();
-
-  useEffect(() => {
-    aVeryHeavyAsyncApiCall(3000).then(result => {
-      setApiResult(result)
-    })
-  }, []) 
+  
+  const { data: apiResult } = useAsync({ promiseFn: aVeryHeavyAsyncApiCall, thatRunsForMilliSeconds: 3000 })
 
   return (
     <div>

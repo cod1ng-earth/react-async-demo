@@ -15,3 +15,12 @@ Since the state hasn't been removed since it had been captured by the effect, th
 take a note in the effect that you're currently mounted.
 If you're unmounted the effects returned callback is called. Set the unmount state there.
 Check in the promise resolution if we're already unmounted and dismiss the effect without changing state.
+
+# react async solution
+
+comes with lots of options how to express yourself: https://docs.react-async.com/getting-started/usage  
+`PageOne`: demo with a `useAsync` hook  
+`PageTwo`: demo with context based Async components  
+(more in the docs)
+
+React Async claims to be fully compatible to React Suspense / Concurrent React once it has landed.

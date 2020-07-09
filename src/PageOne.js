@@ -1,24 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, {Suspense} from 'react';
+import { aVeryHeavyAsyncApiCall } from './api';
 
-function aVeryHeavyAsyncApiCall(thatRunsForMilliSeconds) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => resolve("hey, Im done!"), thatRunsForMilliSeconds);
-  })
+function ShowApiResult({resource}) {
+  const apiResult = resource.read();
+  return <div>{apiResult}</div>
 }
 
 function PageOne() {
-  const [apiResult, setApiResult] = useState();
-
-  useEffect(() => {
-    aVeryHeavyAsyncApiCall(3000).then(result => {
-      setApiResult(result)
-    })
-  }, []) 
-
   return (
     <div>
       Hi Im Page 1
-      {apiResult ? <div>{apiResult}</div> : <div>waiting......</div>}
+      <Suspense fallback={<div>waiting......</div>}>
+        <ShowApiResult resource={aVeryHeavyAsyncApiCall(3000)} />
+      </Suspense>
     </div>
   );
 }

@@ -10,9 +10,14 @@ function PageOne() {
   const [apiResult, setApiResult] = useState();
 
   useEffect(() => {
+    let mounted = true;
     aVeryHeavyAsyncApiCall(3000).then(result => {
-      setApiResult(result)
+      mounted && setApiResult(result)
+      if (!mounted) {
+        console.debug("oh page 1 is already dead 💀")
+      }
     })
+    return () => mounted = false;
   }, []) 
 
   return (

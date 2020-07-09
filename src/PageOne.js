@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { makeCancelable } from './CancellablePromise';
 
 function aVeryHeavyAsyncApiCall(thatRunsForMilliSeconds) {
   return new Promise((resolve, reject) => {
@@ -10,10 +11,16 @@ function PageOne() {
   const [apiResult, setApiResult] = useState();
 
   useEffect(() => {
-    aVeryHeavyAsyncApiCall(3000).then(result => {
-      setApiResult(result)
-    })
-  }, []) 
+    const cancellablePromise = makeCancelable(aVeryHeavyAsyncApiCall(3000));
+    
+    cancellablePromise.promise.then((result)=>{
+      setApiResult(result);
+    }).catch(() => {
+      console.log('woops!');
+    });
+    
+    return () => cancellablePromise.cancel();
+  }, [])
 
   return (
     <div>
